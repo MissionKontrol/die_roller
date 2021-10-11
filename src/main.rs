@@ -6,20 +6,32 @@ fn main() {
     let parsed_roll = parse_request(&requested_roll);
     let parsed_roll_list = parsed_roll.unwrap();
 
+    let mut roll_result= Vec::new();
+    let mut mod_result = 0u8;
+
     for token in parsed_roll_list.request_list {
-        if let RequestToken::Dice(_) = token {
-            let roll_result = roll(token);
+        if let RequestToken::Dice(x) = token {
+            roll_result.push(roll(x.number_of_dice, x.number_of_die_sides));
+        }
+        else if let RequestToken::Modifier(x) = token {
+            mod_result =  x.value;
         }
     }
 }
 
-fn roll(roll_request_token: RequestToken){
+fn roll(num_dice: u16, num_sides: u8) -> RollResult{
+    let mut rng = rand::thread_rng();
+    let mut roll_result = RollResult { total: 0, };
 
+    for _i in 0..=num_dice {
+        roll_result.total += rng.gen_range(1..=num_sides) as u16;
+    }
+    roll_result
 }
 
 struct RollResult {
     total: u16,
-    // roll_list: Vec<T>,
+    // request_token: RequestToken,
 }
 
 #[derive(Debug, Clone)]
