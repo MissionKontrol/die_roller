@@ -20,7 +20,7 @@ pub fn throw_roll(roll_request_list: &RollRequest) -> u16 {
         match token {
             RequestToken::Dice(roll) => roll_result.push(roll_dice(roll.number_of_dice, roll.number_of_die_sides)),
             RequestToken::Modifier(modifier) => mod_result += modifier.value as u16, 
-            Error => println!("Can't Throw. Your token makes no sense!"),
+            RequestToken::Error => println!("Can't Throw. Your token makes no sense!"),
         }
     }
     mod_result + roll_result.iter().fold(0_u16, |sum, val| sum + val.total)
